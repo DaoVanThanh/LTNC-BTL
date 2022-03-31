@@ -1,7 +1,7 @@
 # depslib dependency file v1.0
-1648734042 source:d:\game\ltnc-btl\main.cpp
+1648738052 source:d:\game\ltnc-btl\main.cpp
 	"loadTexture.h"
-	"globalVariable.h"
+	"Init_Quit.h"
 
 1648734600 source:d:\game\ltnc-btl\loadtexture.cpp
 	"loadTexture.h"
