@@ -43,7 +43,7 @@ int main( int argc, char* args[] )
 bool loadMedia()
 {
     bool success=true;
-    if(!text.loadFromFile("jungle_background.png",renderer))
+    if(!text.loadFromFile("game_image/jungle_background.png",renderer))
     {
         cout<<"Failed to load texture image!";
         success=false;
