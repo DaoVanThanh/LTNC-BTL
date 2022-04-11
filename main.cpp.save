@@ -2,9 +2,22 @@
 #include "Init_Quit.h"
 
 bool loadMedia();
+void freeTexture();
+
 SDL_Window* window=NULL;
 SDL_Renderer* renderer=NULL;
-LTexture text;
+TTF_Font* font=NULL;
+
+SDL_Color yellow={255,255,51};
+
+LTexture background;
+LTexture jungle_background;
+LTexture loadFont;
+LTexture platform;
+
+const int WALKING_ANIMATION_FRAMES = 8;
+SDL_Rect SpriteClips[ WALKING_ANIMATION_FRAMES ];
+LTexture SpriteSheetTexture;
 
 int main( int argc, char* args[] )
 {
@@ -30,12 +43,68 @@ int main( int argc, char* args[] )
                 }
                 SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
                 SDL_RenderClear(renderer);
-                text.render(renderer,0,0);
+                background.render(renderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+
+                loadFont.loadFromRenderedText("Tap to start",yellow,renderer,font);
+                //SDL_RenderPresent(renderer);
+                SDL_Rect RectTangle={RECT_X,RECT_Y,RECT_WIDTH,RECT_HEIGHT};
+                SDL_Point mouse;
+                mouse.x=e.motion.x;
+                mouse.y=e.motion.y;
+
+                if(e.type==SDL_MOUSEMOTION)
+                {
+                    if(SDL_PointInRect(&mouse,&RectTangle))
+                    {
+                        SDL_RenderFillRect(renderer,&RectTangle);
+                        SDL_RenderPresent(renderer);
+                    }
+                    else
+                    {
+                        SDL_RenderPresent(renderer);
+                    }
+
+                }
+                else if(e.type==SDL_MOUSEBUTTONDOWN)
+                {
+                    //SDL_RenderClear(renderer);
+                    break;
+                }
+            }
+            double scrollingOffset=0;
+            bool quit=false;
+            SDL_Event ev;
+            int frame=0;
+            while(!quit)
+            {
+                while(SDL_PollEvent(&ev))
+                {
+                    if(ev.type==SDL_QUIT) quit=true;
+                }
+                scrollingOffset-=0.1;
+                if(scrollingOffset<-jungle_background.getWidth())
+                {
+                    scrollingOffset=0;
+                }
+                SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
+                SDL_RenderClear(renderer);
+                jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+                jungle_background.render(renderer,scrollingOffset+jungle_background.getWidth(),0,SCREEN_WIDTH,SCREEN_HEIGHT);
+                platform.render(renderer,0,540-platform.getHeight()*2,platform.getWidth()*3,platform.getHeight()*2);
+                //run_6.render(renderer,300,330,run_6.getWidth(),run_6.getHeight());
+                SDL_Rect* currentClip=&SpriteClips[frame/8];
+                SpriteSheetTexture.render(renderer,200,330,currentClip->w,currentClip->h,currentClip);
                 SDL_RenderPresent(renderer);
+                ++frame;
+                if( frame / 8 >= WALKING_ANIMATION_FRAMES )
+				{
+					frame = 0;
+				}
             }
         }
     }
-    text.free();
+
+    freeTexture();
     quit(window,renderer);
 	return 0;
 }
@@ -43,11 +112,50 @@ int main( int argc, char* args[] )
 bool loadMedia()
 {
     bool success=true;
-    if(!text.loadFromFile("jungle_background.png",renderer))
+    if(!background.loadFromFile("game_image/background.png",renderer))
     {
-        cout<<"Failed to load texture image!";
+        cout<<"Failed to load background texture image!";
         success=false;
+    }
+    if(!jungle_background.loadFromFile("game_image/jungle_background.png",renderer))
+    {
+        cout<<"Failed to load jungle_background texture image!";
+        success=false;
+    }
+    if(!platform.loadFromFile("game_image/platformGrassed.png",renderer))
+    {
+        cout<<"Failed to load platform texture image!";
+        success=false;
+    }
+    if(!SpriteSheetTexture.loadFromFile("game_image/move.png",renderer))
+    {
+        cout<<"Failed to load move texture image!";
+        success=false;
+    }
+    else
+    {
+        double k=SpriteSheetTexture.getWidth()/8;
+        for(int i=0;i<8;i++)
+        {
+            SpriteClips[i].x=k*i+5;
+            SpriteClips[i].y=0;
+            SpriteClips[i].w=k;
+            SpriteClips[i].h=SpriteSheetTexture.getHeight();
+        }
     }
     return success;
 }
+
+void freeTexture()
+{
+    background.free();
+    jungle_background.free();
+    loadFont.free();
+    platform.free();
+    SpriteSheetTexture.free();
+}
+
+
+
+
 

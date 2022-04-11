@@ -9,8 +9,8 @@
 
 using namespace std;
 
-const int SCREEN_WIDTH=840;
-const int SCREEN_HEIGHT=480;
+const int SCREEN_WIDTH=900;
+const int SCREEN_HEIGHT=540;
 const string WINDOW_TITLE="Banana Kong";
 
 #endif // GLOBALVARIABLE_H_INCLUDED

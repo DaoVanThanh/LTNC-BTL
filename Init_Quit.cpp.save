@@ -37,6 +37,11 @@ bool init(SDL_Window* &window, SDL_Renderer* &renderer)
                     cout<< "SDL_image could not initialize!"<<IMG_GetError();
                     success=false;
                 }
+                if( TTF_Init() == -1 )
+				{
+					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+					success = false;
+				}
             }
         }
     }
@@ -46,7 +51,10 @@ bool init(SDL_Window* &window, SDL_Renderer* &renderer)
 void quit(SDL_Window* &window, SDL_Renderer* &renderer)
 {
     SDL_DestroyRenderer(renderer);
+    renderer=NULL;
     SDL_DestroyWindow(window);
+    window=NULL;
     IMG_Quit();
+    TTF_Quit();
     SDL_Quit();
 }
