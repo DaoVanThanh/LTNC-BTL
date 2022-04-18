@@ -33,18 +33,21 @@ int main( int argc, char* args[] )
         }
         else
         {
-            bool q=false;
+            bool q=false,conti=true;
             SDL_Event e;
             while(!q)
             {
                 while(SDL_PollEvent(&e) != 0)
                 {
-                    if(e.type==SDL_QUIT) q=true;
+                    if(e.type==SDL_QUIT)
+                    {
+                        q=true;
+                        conti=false;
+                    }
                 }
                 SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
                 SDL_RenderClear(renderer);
                 background.render(renderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
-
                 loadFont.loadFromRenderedText("Tap to start",yellow,renderer,font);
                 SDL_Rect RectTangle={RECT_X,RECT_Y,RECT_WIDTH,RECT_HEIGHT};
                 SDL_Point mouse;
@@ -55,49 +58,48 @@ int main( int argc, char* args[] )
                 {
                     if(SDL_PointInRect(&mouse,&RectTangle))
                     {
-                        SDL_RenderFillRect(renderer,&RectTangle);
-                        SDL_RenderPresent(renderer);
+                        SDL_RenderDrawRect(renderer,&RectTangle);
                     }
-                    else
-                    {
-                        SDL_RenderPresent(renderer);
-                    }
-
+                    SDL_RenderPresent(renderer);
                 }
                 else if(e.type==SDL_MOUSEBUTTONDOWN)
                 {
-                    //SDL_RenderClear(renderer);
-                    break;
+                    if(SDL_PointInRect(&mouse,&RectTangle))
+                        break;
                 }
             }
-            double scrollingOffset=0;
-            bool quit=false;
-            SDL_Event ev;
-            int frame=0;
-            while(!quit)
-            {
-                while(SDL_PollEvent(&ev))
+            if(conti) {
+                double scrollingOffset=0;
+                bool quit=false;
+                SDL_Event ev;
+                int frame=0;
+                while(!quit)
                 {
-                    if(ev.type==SDL_QUIT) quit=true;
+                    while(SDL_PollEvent(&ev))
+                    {
+                        if(ev.type==SDL_QUIT) quit=true;
+                    }
+                    scrollingOffset-=0.1;
+                    if(scrollingOffset<-jungle_background.getWidth())
+                    {
+                        scrollingOffset=0;
+
+                    }
+                    SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
+                    SDL_RenderClear(renderer);
+                    jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH*4,SCREEN_HEIGHT*4);
+                    jungle_background.render(renderer,scrollingOffset+jungle_background.getWidth(),0,SCREEN_WIDTH*4,SCREEN_HEIGHT*4);
+                    platform.render(renderer,0,540-platform.getHeight(),platform.getWidth()*3,platform.getHeight()*2);
+                    SDL_Rect* currentClip=&SpriteClips[frame/8];
+                    SpriteSheetTexture.render(renderer,KONG_PosX,KONG_PosY,currentClip->w,currentClip->h,currentClip);
+                    SDL_RenderPresent(renderer);
+                    ++frame;
+
+                    if( frame / 8 >= WALKING_ANIMATION_FRAMES )
+                    {
+                        frame = 0;
+                    }
                 }
-                scrollingOffset-=0.1;
-                if(scrollingOffset<-jungle_background.getWidth())
-                {
-                    scrollingOffset=0;
-                }
-                SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
-                SDL_RenderClear(renderer);
-                jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH,SCREEN_HEIGHT);
-                jungle_background.render(renderer,scrollingOffset+jungle_background.getWidth(),0,SCREEN_WIDTH,SCREEN_HEIGHT);
-                platform.render(renderer,0,540-platform.getHeight()*2,platform.getWidth()*3,platform.getHeight()*2);
-                SDL_Rect* currentClip=&SpriteClips[frame/8];
-                SpriteSheetTexture.render(renderer,200,330,currentClip->w,currentClip->h,currentClip);
-                SDL_RenderPresent(renderer);
-                ++frame;
-                if( frame / 8 >= WALKING_ANIMATION_FRAMES )
-				{
-					frame = 0;
-				}
             }
         }
     }
@@ -152,8 +154,3 @@ void freeTexture()
     platform.free();
     SpriteSheetTexture.free();
 }
-
-
-
-
-
