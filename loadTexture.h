@@ -5,8 +5,8 @@
 
 const int RECT_WIDTH=200;
 const int RECT_HEIGHT=50;
-const int RECT_X=333;
-const int RECT_Y=365;
+const int RECT_X=485;
+const int RECT_Y=425;
 
 class LTexture
 {
