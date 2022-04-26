@@ -13,11 +13,9 @@ SDL_Color yellow={255,255,51};
 LTexture background;
 LTexture jungle_background;
 LTexture loadFont;
-LTexture platform;
-
-const int WALKING_ANIMATION_FRAMES = 8;
-SDL_Rect SpriteClips[ WALKING_ANIMATION_FRAMES ];
-LTexture SpriteSheetTexture;
+LTexture monkey;
+LTexture monkey2;
+LTexture wire;
 
 int main( int argc, char* args[] )
 {
@@ -72,7 +70,7 @@ int main( int argc, char* args[] )
                 double scrollingOffset=0;
                 bool quit=false;
                 SDL_Event ev;
-                int frame=0;
+
                 while(!quit)
                 {
                     while(SDL_PollEvent(&ev))
@@ -87,18 +85,13 @@ int main( int argc, char* args[] )
                     }
                     SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
                     SDL_RenderClear(renderer);
-                    jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH*4,SCREEN_HEIGHT*4);
-                    jungle_background.render(renderer,scrollingOffset+jungle_background.getWidth(),0,SCREEN_WIDTH*4,SCREEN_HEIGHT*4);
-                    platform.render(renderer,0,540-platform.getHeight(),platform.getWidth()*3,platform.getHeight()*2);
-                    SDL_Rect* currentClip=&SpriteClips[frame/8];
-                    SpriteSheetTexture.render(renderer,KONG_PosX,KONG_PosY,currentClip->w,currentClip->h,currentClip);
+                    jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH,SCREEN_HEIGHT*3);
+                    jungle_background.render(renderer,scrollingOffset+jungle_background.getWidth(),0,SCREEN_WIDTH,SCREEN_HEIGHT*3);
+                    wire.render(renderer, KONG_PosX+80,0,wire.getWidth(),wire.getHeight()*1.3/2);
+                    monkey.render(renderer,KONG_PosX,KONG_PosY,monkey.getWidth(),monkey.getHeight());
+                    monkey2.render(renderer,KONG_PosX+10,KONG_PosY-200,monkey2.getWidth(),monkey2.getHeight());
                     SDL_RenderPresent(renderer);
-                    ++frame;
 
-                    if( frame / 8 >= WALKING_ANIMATION_FRAMES )
-                    {
-                        frame = 0;
-                    }
                 }
             }
         }
@@ -122,26 +115,20 @@ bool loadMedia()
         cout<<"Failed to load jungle_background texture image!";
         success=false;
     }
-    if(!platform.loadFromFile("game_image/platformGrassed.png",renderer))
+    if(!monkey.loadFromFile("game_image/monkey.png",renderer))
     {
-        cout<<"Failed to load platform texture image!";
+        cout<<"Failed to load monkey texture image!";
         success=false;
     }
-    if(!SpriteSheetTexture.loadFromFile("game_image/move.png",renderer))
+    if(!wire.loadFromFile("game_image/wire.png",renderer))
+    {
+        cout<<"Failed to load wire texture image!";
+        success=false;
+    }
+    if(!monkey2.loadFromFile("game_image/monkey2.png",renderer))
     {
         cout<<"Failed to load move texture image!";
         success=false;
-    }
-    else
-    {
-        double k=SpriteSheetTexture.getWidth()/8;
-        for(int i=0;i<8;i++)
-        {
-            SpriteClips[i].x=k*i+5;
-            SpriteClips[i].y=0;
-            SpriteClips[i].w=k;
-            SpriteClips[i].h=SpriteSheetTexture.getHeight();
-        }
     }
     return success;
 }
@@ -151,6 +138,7 @@ void freeTexture()
     background.free();
     jungle_background.free();
     loadFont.free();
-    platform.free();
-    SpriteSheetTexture.free();
+    monkey.free();
+    monkey2.free();
+    wire.free();
 }
