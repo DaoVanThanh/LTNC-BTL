@@ -1,5 +1,6 @@
 #include "loadTexture.h"
 #include "Init_Quit.h"
+#include "monkey.h"
 
 bool loadMedia();
 void freeTexture();
@@ -13,7 +14,7 @@ SDL_Color yellow={255,255,51};
 LTexture background;
 LTexture jungle_background;
 LTexture loadFont;
-LTexture monkey;
+Monkey monkey;
 LTexture monkey2;
 LTexture wire;
 
@@ -70,12 +71,13 @@ int main( int argc, char* args[] )
                 double scrollingOffset=0;
                 bool quit=false;
                 SDL_Event ev;
-
+                //Monkey mk;
                 while(!quit)
                 {
                     while(SDL_PollEvent(&ev))
                     {
                         if(ev.type==SDL_QUIT) quit=true;
+                        monkey.handleEvent(ev);
                     }
                     scrollingOffset-=0.1;
                     if(scrollingOffset<-jungle_background.getWidth())
@@ -83,13 +85,13 @@ int main( int argc, char* args[] )
                         scrollingOffset=0;
 
                     }
+                    monkey.move();
                     SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
                     SDL_RenderClear(renderer);
                     jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH,SCREEN_HEIGHT*3);
                     jungle_background.render(renderer,scrollingOffset+jungle_background.getWidth(),0,SCREEN_WIDTH,SCREEN_HEIGHT*3);
                     wire.render(renderer, KONG_PosX+80,0,wire.getWidth(),wire.getHeight()*1.3/2);
-                    monkey.render(renderer,KONG_PosX,KONG_PosY,monkey.getWidth(),monkey.getHeight());
-                    monkey2.render(renderer,KONG_PosX+10,KONG_PosY-200,monkey2.getWidth(),monkey2.getHeight());
+                    monkey.render(renderer,monkey.getPosX(),monkey.getPosY(),monkey.getWidth(),monkey.getHeight());
                     SDL_RenderPresent(renderer);
 
                 }
@@ -125,11 +127,6 @@ bool loadMedia()
         cout<<"Failed to load wire texture image!";
         success=false;
     }
-    if(!monkey2.loadFromFile("game_image/monkey2.png",renderer))
-    {
-        cout<<"Failed to load move texture image!";
-        success=false;
-    }
     return success;
 }
 
@@ -139,6 +136,5 @@ void freeTexture()
     jungle_background.free();
     loadFont.free();
     monkey.free();
-    monkey2.free();
     wire.free();
 }

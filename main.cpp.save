@@ -1,5 +1,6 @@
 #include "loadTexture.h"
 #include "Init_Quit.h"
+#include "monkey.h"
 
 bool loadMedia();
 void freeTexture();
@@ -13,11 +14,9 @@ SDL_Color yellow={255,255,51};
 LTexture background;
 LTexture jungle_background;
 LTexture loadFont;
-LTexture platform;
-
-const int WALKING_ANIMATION_FRAMES = 8;
-SDL_Rect SpriteClips[ WALKING_ANIMATION_FRAMES ];
-LTexture SpriteSheetTexture;
+Monkey monkey;
+LTexture monkey2;
+LTexture wire;
 
 int main( int argc, char* args[] )
 {
@@ -33,20 +32,22 @@ int main( int argc, char* args[] )
         }
         else
         {
-            bool q=false;
+            bool q=false,conti=true;
             SDL_Event e;
             while(!q)
             {
                 while(SDL_PollEvent(&e) != 0)
                 {
-                    if(e.type==SDL_QUIT) q=true;
+                    if(e.type==SDL_QUIT)
+                    {
+                        q=true;
+                        conti=false;
+                    }
                 }
                 SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
                 SDL_RenderClear(renderer);
                 background.render(renderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
-
                 loadFont.loadFromRenderedText("Tap to start",yellow,renderer,font);
-                //SDL_RenderPresent(renderer);
                 SDL_Rect RectTangle={RECT_X,RECT_Y,RECT_WIDTH,RECT_HEIGHT};
                 SDL_Point mouse;
                 mouse.x=e.motion.x;
@@ -56,50 +57,44 @@ int main( int argc, char* args[] )
                 {
                     if(SDL_PointInRect(&mouse,&RectTangle))
                     {
-                        SDL_RenderFillRect(renderer,&RectTangle);
-                        SDL_RenderPresent(renderer);
+                        SDL_RenderDrawRect(renderer,&RectTangle);
                     }
-                    else
-                    {
-                        SDL_RenderPresent(renderer);
-                    }
-
+                    SDL_RenderPresent(renderer);
                 }
                 else if(e.type==SDL_MOUSEBUTTONDOWN)
                 {
-                    //SDL_RenderClear(renderer);
-                    break;
+                    if(SDL_PointInRect(&mouse,&RectTangle))
+                        break;
                 }
             }
-            double scrollingOffset=0;
-            bool quit=false;
-            SDL_Event ev;
-            int frame=0;
-            while(!quit)
-            {
-                while(SDL_PollEvent(&ev))
+            if(conti) {
+                double scrollingOffset=0;
+                bool quit=false;
+                SDL_Event ev;
+                //Monkey mk;
+                while(!quit)
                 {
-                    if(ev.type==SDL_QUIT) quit=true;
+                    while(SDL_PollEvent(&ev))
+                    {
+                        if(ev.type==SDL_QUIT) quit=true;
+                        monkey.handleEvent(ev);
+                    }
+                    scrollingOffset-=0.1;
+                    if(scrollingOffset<-jungle_background.getWidth())
+                    {
+                        scrollingOffset=0;
+
+                    }
+                    monkey.move();
+                    SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
+                    SDL_RenderClear(renderer);
+                    jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH,SCREEN_HEIGHT*3);
+                    jungle_background.render(renderer,scrollingOffset+jungle_background.getWidth(),0,SCREEN_WIDTH,SCREEN_HEIGHT*3);
+                    wire.render(renderer, KONG_PosX+80,0,wire.getWidth(),wire.getHeight()*1.3/2);
+                    monkey.render(renderer,monkey.getPosX(),monkey.getPosY(),50,50);
+                    SDL_RenderPresent(renderer);
+
                 }
-                scrollingOffset-=0.1;
-                if(scrollingOffset<-jungle_background.getWidth())
-                {
-                    scrollingOffset=0;
-                }
-                SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
-                SDL_RenderClear(renderer);
-                jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH,SCREEN_HEIGHT);
-                jungle_background.render(renderer,scrollingOffset+jungle_background.getWidth(),0,SCREEN_WIDTH,SCREEN_HEIGHT);
-                platform.render(renderer,0,540-platform.getHeight()*2,platform.getWidth()*3,platform.getHeight()*2);
-                //run_6.render(renderer,300,330,run_6.getWidth(),run_6.getHeight());
-                SDL_Rect* currentClip=&SpriteClips[frame/8];
-                SpriteSheetTexture.render(renderer,200,330,currentClip->w,currentClip->h,currentClip);
-                SDL_RenderPresent(renderer);
-                ++frame;
-                if( frame / 8 >= WALKING_ANIMATION_FRAMES )
-				{
-					frame = 0;
-				}
             }
         }
     }
@@ -122,26 +117,20 @@ bool loadMedia()
         cout<<"Failed to load jungle_background texture image!";
         success=false;
     }
-    if(!platform.loadFromFile("game_image/platformGrassed.png",renderer))
+    if(!monkey.loadFromFile("game_image/monkey.png",renderer))
     {
-        cout<<"Failed to load platform texture image!";
+        cout<<"Failed to load monkey texture image!";
         success=false;
     }
-    if(!SpriteSheetTexture.loadFromFile("game_image/move.png",renderer))
+    if(!wire.loadFromFile("game_image/wire.png",renderer))
+    {
+        cout<<"Failed to load wire texture image!";
+        success=false;
+    }
+    if(!monkey2.loadFromFile("game_image/monkey2.png",renderer))
     {
         cout<<"Failed to load move texture image!";
         success=false;
-    }
-    else
-    {
-        double k=SpriteSheetTexture.getWidth()/8;
-        for(int i=0;i<8;i++)
-        {
-            SpriteClips[i].x=k*i+5;
-            SpriteClips[i].y=0;
-            SpriteClips[i].w=k;
-            SpriteClips[i].h=SpriteSheetTexture.getHeight();
-        }
     }
     return success;
 }
@@ -151,11 +140,7 @@ void freeTexture()
     background.free();
     jungle_background.free();
     loadFont.free();
-    platform.free();
-    SpriteSheetTexture.free();
+    monkey.free();
+    monkey2.free();
+    wire.free();
 }
-
-
-
-
-

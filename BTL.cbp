@@ -38,6 +38,8 @@
 		<Unit filename="loadTexture.cpp" />
 		<Unit filename="loadTexture.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="monkey.cpp" />
+		<Unit filename="monkey.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
