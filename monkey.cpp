@@ -5,6 +5,7 @@ Monkey::Monkey()
     PosX=KONG_PosX;
     PosY=KONG_PosY;
     Vel=0;
+
 }
 
 void Monkey::handleEvent(SDL_Event& e)
@@ -38,19 +39,26 @@ void Monkey::handleEvent(SDL_Event& e)
 void Monkey::move()
 {
     PosY += Vel;
+    MK_RECT.y = PosY;
     if(PosY < 0 || (PosY+MK_HEIGHT) > SCREEN_HEIGHT)
     {
         PosY -= Vel;
+        MK_RECT.y = PosY;
     }
 }
 
-int Monkey::getPosX()
+double Monkey::getPosX()
 {
     return PosX;
 }
 
-int Monkey::getPosY()
+double Monkey::getPosY()
 {
     return PosY;
+}
+
+SDL_Rect Monkey::getRect()
+{
+    return MK_RECT;
 }
 

@@ -4,6 +4,7 @@
 
 bool loadMedia();
 void freeTexture();
+bool CollisionHandle(SDL_Rect A, SDL_Rect B);
 
 SDL_Window* window=NULL;
 SDL_Renderer* renderer=NULL;
@@ -14,9 +15,10 @@ SDL_Color yellow={255,255,51};
 LTexture background;
 LTexture jungle_background;
 LTexture loadFont;
-Monkey monkey;
-LTexture monkey2;
 LTexture wire;
+LTexture banana;
+
+Monkey monkey;
 
 int main( int argc, char* args[] )
 {
@@ -68,10 +70,13 @@ int main( int argc, char* args[] )
                 }
             }
             if(conti) {
+                srand(time(NULL));
+
                 double scrollingOffset=0;
                 bool quit=false;
                 SDL_Event ev;
-                //Monkey mk;
+                
+                int posy=rand() % (600-20+1)+20;
                 while(!quit)
                 {
                     while(SDL_PollEvent(&ev))
@@ -80,7 +85,7 @@ int main( int argc, char* args[] )
                         monkey.handleEvent(ev);
                     }
                     scrollingOffset-=0.1;
-                    if(scrollingOffset<-jungle_background.getWidth())
+                    if(scrollingOffset<-SCREEN_WIDTH)
                     {
                         scrollingOffset=0;
 
@@ -88,11 +93,23 @@ int main( int argc, char* args[] )
                     monkey.move();
                     SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
                     SDL_RenderClear(renderer);
-                    jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH,SCREEN_HEIGHT*3);
-                    jungle_background.render(renderer,scrollingOffset+jungle_background.getWidth(),0,SCREEN_WIDTH,SCREEN_HEIGHT*3);
-                    wire.render(renderer, KONG_PosX+80,0,wire.getWidth(),wire.getHeight()*1.3/2);
-                    monkey.render(renderer,monkey.getPosX(),monkey.getPosY(),50,50);
+                    jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH,SCREEN_HEIGHT*2);
+                    jungle_background.render(renderer,scrollingOffset+SCREEN_WIDTH,0,SCREEN_WIDTH,SCREEN_HEIGHT*2);
+                    wire.render(renderer, WIRE_PosX, WIRE_PosY, wire.getWidth(), wire.getHeight()*1.3/2);
+                    monkey.render(renderer, monkey.getPosX(), monkey.getPosY(), monkey.getWidth(), monkey.getHeight());
+                    banana.render(renderer,scrollingOffset,posy,banana.getWidth()/3,banana.getHeight()/3);
+                    //SDL_RenderDrawRect(renderer,banana.GetRect());
+                    banana.render(renderer,scrollingOffset+SCREEN_WIDTH,posy,banana.getWidth()/3,banana.getHeight()/3);
+                    //SDL_RenderDrawRect(renderer,banana.GetRect());
+                    //SDL_RenderDrawRect(renderer,monkey.getRect());
+//                    if(CollisionHandle(monkey.getRect(),banana.GetRect()))
+//                    {
+//                        SDL_Delay(1000);
+//                        quit=true;
+//                    }
+
                     SDL_RenderPresent(renderer);
+
 
                 }
             }
@@ -127,9 +144,9 @@ bool loadMedia()
         cout<<"Failed to load wire texture image!";
         success=false;
     }
-    if(!monkey2.loadFromFile("game_image/monkey2.png",renderer))
+    if(!banana.loadFromFile("game_image/banana.png",renderer))
     {
-        cout<<"Failed to load move texture image!";
+        cout<<"Failed to load banana texture image!";
         success=false;
     }
     return success;
@@ -141,6 +158,21 @@ void freeTexture()
     jungle_background.free();
     loadFont.free();
     monkey.free();
-    monkey2.free();
     wire.free();
+    banana.free();
+}
+
+bool CollisionHandle(SDL_Rect A, SDL_Rect B)
+{
+    int leftA=A.x, rightA=A.x+A.w, topA=A.y, bottomA=A.y+A.h;
+    int leftB=B.x, rightB=B.x+B.w, topB=B.y, bottomB=B.y+B.h;
+    if(bottomA <= topB)
+        return false;
+    if(bottomB <= topA)
+        return false;
+    if(leftA >= rightB)
+        return false;
+    if(leftB >= rightA)
+        return false;
+    return true;
 }

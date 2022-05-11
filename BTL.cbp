@@ -34,6 +34,7 @@
 		</Compiler>
 		<Unit filename="Init_Quit.cpp" />
 		<Unit filename="Init_Quit.h" />
+		<Unit filename="banana.h" />
 		<Unit filename="globalVariable.h" />
 		<Unit filename="loadTexture.cpp" />
 		<Unit filename="loadTexture.h" />
