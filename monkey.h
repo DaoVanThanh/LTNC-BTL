@@ -17,12 +17,12 @@ public:
     void move();
     double getPosX();
     double getPosY();
-    SDL_Rect getRect();
+    SDL_Rect* getRect();
 private:
     double PosX;
     double PosY;
     double Vel;
-    SDL_Rect MK_RECT={KONG_PosX,KONG_PosY,MK_WIDTH,MK_HEIGHT};
+    SDL_Rect MK_RECT={KONG_PosX+pos*3/2,KONG_PosY,MK_WIDTH/2,MK_HEIGHT*4/5};
 
 };
 

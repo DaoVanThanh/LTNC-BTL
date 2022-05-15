@@ -13,7 +13,7 @@ const int SCREEN_WIDTH=1200;
 const int SCREEN_HEIGHT=620;
 const string WINDOW_TITLE="Banana Kong";
 
-const int KONG_PosX=10;
+const int KONG_PosX=25;
 const int KONG_PosY=425;
 const int WIRE_PosX=90;
 const int WIRE_PosY=0;

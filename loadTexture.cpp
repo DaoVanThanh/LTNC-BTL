@@ -81,8 +81,6 @@ void LTexture::render(SDL_Renderer* &rendererr,int x, int y,int Width, int Heigh
 
 	//Render to screen
 	SDL_RenderCopy( rendererr, texture, clip, &renderQuad);
-	T_Rect={x+pos,y+pos,Width/2,Height/2};
-
 }
 
 void LTexture::free()
@@ -105,9 +103,3 @@ int LTexture::getHeight()
 {
     return height;
 }
-
-SDL_Rect LTexture::GetRect()
-{
-    return T_Rect;
-}
-

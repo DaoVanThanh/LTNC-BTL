@@ -5,7 +5,6 @@ Monkey::Monkey()
     PosX=KONG_PosX;
     PosY=KONG_PosY;
     Vel=0;
-
 }
 
 void Monkey::handleEvent(SDL_Event& e)
@@ -57,8 +56,8 @@ double Monkey::getPosY()
     return PosY;
 }
 
-SDL_Rect Monkey::getRect()
+SDL_Rect* Monkey::getRect()
 {
-    return MK_RECT;
+    return &MK_RECT;
 }
 

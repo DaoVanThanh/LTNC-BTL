@@ -1,6 +1,7 @@
 #include "loadTexture.h"
 #include "Init_Quit.h"
 #include "monkey.h"
+#include "banana.h"
 
 bool loadMedia();
 void freeTexture();
@@ -16,7 +17,8 @@ LTexture background;
 LTexture jungle_background;
 LTexture loadFont;
 LTexture wire;
-LTexture banana;
+
+Banana banana;
 
 Monkey monkey;
 
@@ -75,8 +77,7 @@ int main( int argc, char* args[] )
                 double scrollingOffset=0;
                 bool quit=false;
                 SDL_Event ev;
-
-                int posy=rand() % (600-20+1)+20;
+                banana.setX(0.3);
                 while(!quit)
                 {
                     while(SDL_PollEvent(&ev))
@@ -96,12 +97,12 @@ int main( int argc, char* args[] )
                     jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH,SCREEN_HEIGHT*2);
                     jungle_background.render(renderer,scrollingOffset+SCREEN_WIDTH,0,SCREEN_WIDTH,SCREEN_HEIGHT*2);
                     wire.render(renderer, WIRE_PosX, WIRE_PosY, wire.getWidth(), wire.getHeight()*1.3/2);
-                    monkey.render(renderer, monkey.getPosX(), monkey.getPosY(), monkey.getWidth(), monkey.getHeight());
-                    banana.render(renderer,scrollingOffset,posy,banana.getWidth()/3,banana.getHeight()/3);
-                    //SDL_RenderDrawRect(renderer,banana.GetRect());
-                    banana.render(renderer,scrollingOffset+SCREEN_WIDTH,posy,banana.getWidth()/3,banana.getHeight()/3);
-                    //SDL_RenderDrawRect(renderer,banana.GetRect());
-                    //SDL_RenderDrawRect(renderer,monkey.getRect());
+                    monkey.render(renderer, monkey.getPosX(), monkey.getPosY(), monkey.getWidth()*4/5, monkey.getHeight()*4/5);
+                    banana.render(renderer,banana.getPosX(),banana.getPosY(),banana.getWidth()/4,banana.getHeight()/4);
+                    banana.HandleMove();
+//                    SDL_Rect* rectt=banana.getRect(banana.getPosX(),banana.getPosY(),banana.getWidth()/3,banana.getHeight()/3);
+//                    SDL_RenderDrawRect(renderer,rectt);
+//                    SDL_RenderDrawRect(renderer,monkey.getRect());
 //                    if(CollisionHandle(monkey.getRect(),banana.GetRect()))
 //                    {
 //                        SDL_Delay(1000);
@@ -109,8 +110,6 @@ int main( int argc, char* args[] )
 //                    }
 
                     SDL_RenderPresent(renderer);
-
-
                 }
             }
         }

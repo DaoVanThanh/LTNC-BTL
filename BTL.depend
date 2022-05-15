@@ -1,16 +1,17 @@
 # depslib dependency file v1.0
-1652287197 source:d:\game\ltnc-btl\main.cpp
+1652596967 source:d:\game\ltnc-btl\main.cpp
 	"loadTexture.h"
 	"Init_Quit.h"
 	"monkey.h"
+	"banana.h"
 
-1652063826 source:d:\game\ltnc-btl\loadtexture.cpp
+1652596948 source:d:\game\ltnc-btl\loadtexture.cpp
 	"loadTexture.h"
 
-1652063826 d:\game\ltnc-btl\loadtexture.h
+1652596948 d:\game\ltnc-btl\loadtexture.h
 	"globalVariable.h"
 
-1652000644 d:\game\ltnc-btl\globalvariable.h
+1652590412 d:\game\ltnc-btl\globalvariable.h
 	<bits/stdc++.h>
 	<SDL.h>
 	<SDL_image.h>
@@ -29,10 +30,16 @@
 1649950579 d:\game\ltnc-btl\move.h
 	"loadTexture.h"
 
-1652066242 d:\game\ltnc-btl\monkey.h
+1652590911 d:\game\ltnc-btl\monkey.h
 	"globalVariable.h"
 	"loadTexture.h"
 
-1652063826 source:d:\game\ltnc-btl\monkey.cpp
+1652584076 source:d:\game\ltnc-btl\monkey.cpp
 	"monkey.h"
+
+1652596996 source:d:\game\ltnc-btl\banana.cpp
+	"banana.h"
+
+1652581645 d:\game\ltnc-btl\banana.h
+	"loadTexture.h"
 
