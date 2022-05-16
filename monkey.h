@@ -10,19 +10,19 @@ class Monkey:public LTexture
 {
 public:
     const int MK_WIDTH = 118;
-    const int MK_HEIGHT = 153;
-    const double MK_VEL = 0.25;
+    const int MK_HEIGHT = 125;
+    const double MK_VEL = 0.3;
     Monkey();
     void handleEvent(SDL_Event& e);
     void move();
     double getPosX();
     double getPosY();
-    SDL_Rect* getRect();
+    SDL_Rect getRect();
 private:
     double PosX;
     double PosY;
     double Vel;
-    SDL_Rect MK_RECT={KONG_PosX+pos*3/2,KONG_PosY,MK_WIDTH/2,MK_HEIGHT*4/5};
+    SDL_Rect MK_RECT={KONG_PosX+val*3/2,KONG_PosY,MK_WIDTH/2,MK_HEIGHT*4/5};
 
 };
 

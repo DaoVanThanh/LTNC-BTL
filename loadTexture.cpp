@@ -61,7 +61,7 @@ void LTexture::loadFromRenderedText(string textureText, SDL_Color textColor, SDL
 		}
 		else
 		{
-		    SDL_Rect textRect={RECT_X,RECT_Y,RECT_WIDTH,RECT_HEIGHT};
+		    SDL_Rect textRect={TEXT_X,TEXT_Y,TEXT_WIDTH,TEXT_HEIGHT};
 			SDL_RenderCopy(rendererr,text,NULL,&textRect);
 		}
 

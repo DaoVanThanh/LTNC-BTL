@@ -3,11 +3,11 @@
 
 #include "globalVariable.h"
 
-const int RECT_WIDTH=200;
-const int RECT_HEIGHT=50;
-const int RECT_X=485;
-const int RECT_Y=425;
-const int pos=15;
+const int TEXT_WIDTH=200;
+const int TEXT_HEIGHT=50;
+const int TEXT_X=485;
+const int TEXT_Y=425;
+const int val=15;
 
 class LTexture
 {

@@ -56,8 +56,8 @@ double Monkey::getPosY()
     return PosY;
 }
 
-SDL_Rect* Monkey::getRect()
+SDL_Rect Monkey::getRect()
 {
-    return &MK_RECT;
+    return MK_RECT;
 }
 
