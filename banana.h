@@ -9,15 +9,12 @@ public:
     Banana();
     void HandleMove();
     void setX(const double& X) {x_val=X;}
-//    void setY(const double& Y) {y_val=Y;}
-//    double getX() {return x_val;}
-//    double getY() {return y_val;}
     double getPosX() {return Posx;}
     double getPosY() {return Posy;}
+    void reset();
     SDL_Rect getRect(int x, int y,int b_width, int b_height);
 private:
     double x_val;
-    double y_val;
     double Posx;
     double Posy;
     SDL_Rect rect;

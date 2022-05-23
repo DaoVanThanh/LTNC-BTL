@@ -40,10 +40,10 @@ bool LTexture::loadFromFile(string path,SDL_Renderer* &rendererr)
     return texture!=NULL;
 }
 
-void LTexture::loadFromRenderedText(string textureText, SDL_Color textColor, SDL_Renderer* &rendererr, TTF_Font* font)
+void LTexture::loadFromRenderedText(string textureText,string Font, SDL_Color textColor, SDL_Renderer* &rendererr, TTF_Font* font,int posx, int posy,int width,int height)
 {
 	free();
-	font=TTF_OpenFont("font.ttf", 56);
+	font=TTF_OpenFont(Font, 56);
 	//Render text surface
 	SDL_Surface* textSurface = TTF_RenderText_Solid( font, textureText.c_str(), textColor );
 	if( textSurface == NULL )
@@ -54,14 +54,14 @@ void LTexture::loadFromRenderedText(string textureText, SDL_Color textColor, SDL
 	{
 
 		//Create texture from surface pixels
-        SDL_Texture* text = SDL_CreateTextureFromSurface( rendererr, textSurface );
+        SDL_Texture* text = SDL_CreateTextureFromSurface(rendererr, textSurface );
 		if( text == NULL )
 		{
 			cout<<"Unable to create texture from rendered text!"<< SDL_GetError() ;
 		}
 		else
 		{
-		    SDL_Rect textRect={RECT_X,RECT_Y,RECT_WIDTH,RECT_HEIGHT};
+		    SDL_Rect textRect={posx,posy,width,height};
 			SDL_RenderCopy(rendererr,text,NULL,&textRect);
 		}
 
@@ -70,17 +70,17 @@ void LTexture::loadFromRenderedText(string textureText, SDL_Color textColor, SDL
 	}
 }
 
-void LTexture::render(SDL_Renderer* &rendererr,int x, int y,int Width, int Height,SDL_Rect* clip)
+void LTexture::render(SDL_Renderer* &rendererr,int x, int y,int Width, int Height)
 {
     SDL_Rect renderQuad={x,y,Width,Height};
-    if( clip != NULL )
-	{
-		renderQuad.w = clip->w;
-		renderQuad.h = clip->h;
-	}
+//    if( clip != NULL )
+//	{
+//		renderQuad.w = clip->w;
+//		renderQuad.h = clip->h;
+//	}
 
 	//Render to screen
-	SDL_RenderCopy( rendererr, texture, clip, &renderQuad);
+	SDL_RenderCopy( rendererr, texture, NULL, &renderQuad);
 }
 
 void LTexture::free()

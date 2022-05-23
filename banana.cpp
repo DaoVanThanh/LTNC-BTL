@@ -3,9 +3,8 @@
 Banana::Banana()
 {
     Posx=SCREEN_WIDTH;
-    Posy=SCREEN_HEIGHT*0.5;
+    Posy=rand()%430;
     x_val=0;
-    y_val=0;
 }
 
 
@@ -18,6 +17,13 @@ void Banana::HandleMove()
         double rand_y=rand()%430;
         Posy=rand_y;
     }
+}
+
+void Banana::reset()
+{
+    Posx=SCREEN_WIDTH+100;
+    double rand_y=rand()%430;
+    Posy=rand_y;
 }
 
 SDL_Rect Banana::getRect(int x, int y,int b_width, int b_height)
