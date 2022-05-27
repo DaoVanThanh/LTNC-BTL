@@ -2,7 +2,7 @@
 
 B::B()
 {
-    Posx=SCREEN_WIDTH;
+    Posx=rand() % (1500-SCREEN_WIDTH)+SCREEN_WIDTH;
     Posy=rand()%450;
     vel=0;
 }
@@ -13,7 +13,8 @@ void B::HandleMove(int MIN,int MAX)
     Posx-=vel;
     if(Posx < 0)
     {
-        Posx=SCREEN_WIDTH;
+        double rand_x=rand() % (1500-SCREEN_WIDTH)+SCREEN_WIDTH;
+        Posx=rand_x;
         double rand_y=rand()%(MAX-MIN+1) + MIN;
         Posy=rand_y;
     }
@@ -21,7 +22,8 @@ void B::HandleMove(int MIN,int MAX)
 
 void B::reset(int MIN,int MAX)
 {
-    Posx=SCREEN_WIDTH+100;
+    double rand_x=rand() % (1500-SCREEN_WIDTH)+SCREEN_WIDTH;
+    Posx=rand_x;
     double rand_y=rand()%(MAX-MIN+1) + MIN;
     Posy=rand_y;
 }
