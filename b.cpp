@@ -1,16 +1,16 @@
-#include "banana.h"
+#include "b.h"
 
-Banana::Banana()
+B::B()
 {
     Posx=SCREEN_WIDTH;
     Posy=rand()%450;
-    x_val=0;
+    vel=0;
 }
 
 
-void Banana::HandleMove(int MIN,int MAX)
+void B::HandleMove(int MIN,int MAX)
 {
-    Posx-=x_val;
+    Posx-=vel;
     if(Posx < 0)
     {
         Posx=SCREEN_WIDTH;
@@ -19,14 +19,14 @@ void Banana::HandleMove(int MIN,int MAX)
     }
 }
 
-void Banana::reset()
+void B::reset(int MIN,int MAX)
 {
     Posx=SCREEN_WIDTH+100;
-    double rand_y=rand()%450;
+    double rand_y=rand()%(MAX-MIN+1) + MIN;
     Posy=rand_y;
 }
 
-SDL_Rect Banana::getRect(int x, int y,int b_width, int b_height)
+SDL_Rect B::getRect(int x, int y,int b_width, int b_height)
 {
     rect={x+val,y+val,b_width/2,b_height/2};
     return rect;

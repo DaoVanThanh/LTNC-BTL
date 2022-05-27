@@ -11,7 +11,7 @@ class Monkey:public LTexture
 public:
     const int MK_WIDTH = 118;
     const int MK_HEIGHT = 125;
-    const double MK_VEL = 1;
+    const double MK_VEL = 15;
     Monkey();
     void handleEvent(SDL_Event& e);
     void move();

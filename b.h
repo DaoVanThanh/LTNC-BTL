@@ -3,18 +3,18 @@
 
 #include "loadTexture.h"
 
-class Banana : public LTexture
+class B : public LTexture
 {
 public:
-    Banana();
+    B();
     void HandleMove(int MIN,int MAX);
-    void setX(const double& X) {x_val=X;}
+    void setX(const double& _vel) {vel=_vel;}
     double getPosX() {return Posx;}
     double getPosY() {return Posy;}
-    void reset();
+    void reset(int MIN,int MAX);
     SDL_Rect getRect(int x, int y,int b_width, int b_height);
 private:
-    double x_val;
+    double vel;
     double Posx;
     double Posy;
     SDL_Rect rect;

@@ -1,7 +1,7 @@
 #include "loadTexture.h"
 #include "Init_Quit.h"
 #include "monkey.h"
-#include "banana.h"
+#include "b.h"
 
 bool loadMedia();
 void freeTexture();
@@ -14,15 +14,12 @@ TTF_Font* font=NULL;
 SDL_Color yellow={255,255,51};
 SDL_Color red={255,0,0};
 
-LTexture background;
-LTexture jungle_background;
-LTexture loadFont;
-LTexture wire;
-
-
-Banana banana;
-Banana bird;
-Banana box;
+B banana;
+const int numOfBird=3;
+vector<B>bird(numOfBird);
+const double VEL=20;
+const int bird_posy=450;
+const int banana_posy=450;
 
 Monkey monkey_die;
 
@@ -40,22 +37,32 @@ int main( int argc, char* args[] )
         }
         else
         {
-            bool q=false,conti=true;
+            bool q=false,continuee=true;
             SDL_Event e;
 
             while(!q)
             {
+
+                LTexture background;
+                LTexture loadFont;
+                if(!background.loadFromFile("game_image/background.png",renderer))
+                {
+                    cout<<"Failed to load background texture image!";
+                    return 0;
+                }
+
                 while(SDL_PollEvent(&e) != 0)
                 {
                     if(e.type==SDL_QUIT)
                     {
                         q=true;
-                        conti=false;
+                        continuee=false;
                     }
                 }
 
-                SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
+                SDL_SetRenderDrawColor(renderer,255,255,0,255);
                 SDL_RenderClear(renderer);
+
                 background.render(renderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
                 loadFont.loadFromRenderedText("Tap to start","font1.ttf",yellow,renderer,font,START_X,START_Y,START_W,START_H);
 
@@ -79,13 +86,22 @@ int main( int argc, char* args[] )
                     if(SDL_PointInRect(&mouse,&Start_Rect))
                         break;
                 }
+
+                background.free();
+                loadFont.free();
+
             }
-            if(conti) {
+
+            if(continuee)
+            {
+
                 bool quit=false;
-                srand((int)time(NULL));
+                srand(time(NULL));
                 bool gameOver=false;
                 while(!gameOver)
                 {
+
+                // PLAY GAME
                     Monkey monkey;
                     if(!monkey.loadFromFile("game_image/monkey.png",renderer))
                     {
@@ -94,17 +110,34 @@ int main( int argc, char* args[] )
 
                     double scrollingOffset=0;
                     int score = 0;
-
                     SDL_Event ev;
 
-                    const double x=2;
-                    banana.setX(x);
-                    bird.setX(x);
-                    box.setX(x);
+                    //SET VELOCITY
+                    banana.setX(VEL);
+                    for(int i=0;i<numOfBird;i++)
+                    {
+                        bird[i].setX(VEL);
+                    }
 
                     bool endd=false;
+
                     while(!quit)
                     {
+
+                        LTexture jungle_background;
+                        LTexture wire;
+                        LTexture loadFont;
+                        if(!jungle_background.loadFromFile("game_image/jungle_background.png",renderer))
+                        {
+                            cout<<"Failed to load jungle_background texture image!";
+                            return 0;
+                        }
+                        if(!wire.loadFromFile("game_image/wire.png",renderer))
+                        {
+                            cout<<"Failed to load wire texture image!";
+                            return 0;
+                        }
+
                         while(SDL_PollEvent(&ev))
                         {
                             if(ev.type==SDL_QUIT)
@@ -115,7 +148,7 @@ int main( int argc, char* args[] )
                             monkey.handleEvent(ev);
                         }
 
-                        scrollingOffset-=0.1;
+                        scrollingOffset-=3;
                         if(scrollingOffset<-SCREEN_WIDTH)
                         {
                             scrollingOffset=0;
@@ -123,51 +156,60 @@ int main( int argc, char* args[] )
                         }
 
                         monkey.move();
-                        SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
+
                         SDL_RenderClear(renderer);
 
                         jungle_background.render(renderer,scrollingOffset,0,SCREEN_WIDTH,SCREEN_HEIGHT*2);
                         jungle_background.render(renderer,scrollingOffset+SCREEN_WIDTH,0,SCREEN_WIDTH,SCREEN_HEIGHT*2);
                         wire.render(renderer, WIRE_PosX, WIRE_PosY, wire.getWidth(), wire.getHeight()*1.3/2);
-                        monkey.render(renderer, monkey.getPosX(), monkey.getPosY(), monkey.getWidth()*4/5, monkey.getHeight()*4/5);
+                        monkey.render(renderer, monkey.getPosX(), monkey.getPosY(), monkey.getWidth()*7/10, monkey.getHeight()*7/10);
 
-                        banana.HandleMove();
-                        bird.HandleMove();
-                        box.HandleMove();
+                        banana.HandleMove(0,banana_posy);
+                        for(int i=0;i<numOfBird;i++)
+                        {
+                            bird[i].HandleMove(bird_posy/numOfBird*i+2*val,bird_posy/numOfBird*(i+1)-2*val);
+                        }
+
                         banana.render(renderer,banana.getPosX(),banana.getPosY(),banana.getWidth()/4,banana.getHeight()/4);
-                        bird.render(renderer,bird.getPosX(),bird.getPosY(),bird.getWidth(),bird.getHeight());
-                        box.render(renderer,box.getPosX(),box.getPosY(),box.getWidth(),box.getHeight());
+                        for(int i=0;i<numOfBird;i++)
+                        {
+                            bird[i].render(renderer,bird[i].getPosX(),bird[i].getPosY(),bird[i].getWidth(),bird[i].getHeight());
+                        }
+
 
                         SDL_Rect mk_rect=monkey.getRect();
                         SDL_Rect banana_rect=banana.getRect(banana.getPosX(),banana.getPosY(),banana.getWidth()/3,banana.getHeight()/3);
-                        SDL_Rect bird_rect=bird.getRect(bird.getPosX(),bird.getPosY(),bird.getWidth(),bird.getHeight()+val);
-                        SDL_Rect box_rect=box.getRect(box.getPosX()-val,box.getPosY()-val,box.getWidth()*2,box.getHeight()*2);
-
-                        SDL_RenderDrawRect(renderer,&mk_rect);
-                        SDL_RenderDrawRect(renderer,&banana_rect);
-                        SDL_RenderDrawRect(renderer,&bird_rect);
-                        SDL_RenderDrawRect(renderer,&box_rect);
+                        vector<SDL_Rect> bird_rect(numOfBird);
+                        for(int i=0;i<numOfBird;i++)
+                        {
+                            bird_rect[i]=bird[i].getRect(bird[i].getPosX(),bird[i].getPosY(),bird[i].getWidth(),bird[i].getHeight()+val);
+                        }
 
                         if(CollisionHandle(mk_rect,banana_rect))
                         {
                             score++;
-                            banana.reset();
+                            banana.reset(0,banana_posy);
                         }
                         loadFont.loadFromRenderedText("Score:","font2.ttf",yellow,renderer,font,SCORE_X,SCORE_Y,SCORE_W,SCORE_H);
                         string Score=to_string(score);
                         loadFont.loadFromRenderedText(Score,"font.ttf",yellow,renderer,font,score_X,score_Y,score_W,score_H);
-
-                        if(CollisionHandle(mk_rect,bird_rect) || CollisionHandle(mk_rect,box_rect))
+                        for(int i=0;i<numOfBird;i++)
                         {
-
-                            monkey_die.render(renderer,monkey.getPosX(),monkey.getPosY(), monkey.getWidth()*4/5, monkey.getHeight()*4/5);
-                            monkey.free();
-                            SDL_RenderPresent(renderer);
-                            SDL_Delay(1000);
-                            quit=true;
+                            if( CollisionHandle(mk_rect,bird_rect[i]))
+                            {
+                                monkey_die.render(renderer,monkey.getPosX(),monkey.getPosY()-25, monkey_die.getWidth(), monkey_die.getHeight());
+                                monkey.free();
+                                SDL_RenderPresent(renderer);
+                                SDL_Delay(1000);
+                                quit=true;
+                                break;
+                            }
                         }
 
                         SDL_RenderPresent(renderer);
+                        jungle_background.free();
+                        wire.free();
+                        loadFont.free();
 
                     }
 
@@ -176,21 +218,35 @@ int main( int argc, char* args[] )
                         return 0;
                     }
 
+                //GAME OVER!
+
                     bool quit_game=false;
                     SDL_Event event;
                     while(!quit_game)
                     {
+
+                        LTexture background;
+                        LTexture loadFont;
+                        if(!background.loadFromFile("game_image/background.png",renderer))
+                        {
+                            cout<<"Failed to load background texture image!";
+                            return 0;
+                        }
+
                         while(SDL_PollEvent(&event))
+                        {
+                            if(event.type==SDL_QUIT)
                             {
-                            if(event.type==SDL_QUIT) {
                                 quit_game=true;
                                 gameOver=true;
+                                break;
                             }
                         }
 
-                        SDL_SetRenderDrawColor(renderer,0xFF,0xFF,0xFF,0xFF);
+                        SDL_SetRenderDrawColor(renderer,255,255,0,255);
                         SDL_RenderClear(renderer);
                         background.render(renderer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+
                         string s="Game Over !";
                         for(int i=0;i<s.length();i++)
                         {
@@ -200,8 +256,17 @@ int main( int argc, char* args[] )
                         loadFont.loadFromRenderedText("Score:","font2.ttf",yellow,renderer,font,Score_X,Score_Y,Score_W,Score_H);
                         string Score=to_string(score);
                         loadFont.loadFromRenderedText(Score,"font2.ttf",yellow,renderer,font,GO_SCORE_X,GO_SCORE_Y,GO_SCORE,GO_SCORE);
+
+                        //GET HIGHSCORE
+                        int high_sc;
+                        fstream h_sc("highScore.txt",ios::in | ios::out);
+                        h_sc>>high_sc;
+                        if(score>high_sc) h_sc<<score;
+                        else h_sc<<high_sc;
+                        h_sc.close();
+                        string highScore=to_string(high_sc);
                         loadFont.loadFromRenderedText("High Score:","font2.ttf",yellow,renderer,font,HIGH_SCORE_X,HIGH_SCORE_Y,HIGH_SCORE_W,HIGH_SCORE_H);
-                        loadFont.loadFromRenderedText(Score,"font2.ttf",yellow,renderer,font,HIGH_score_X,HIGH_score_Y,HIGH_score,HIGH_score);
+                        loadFont.loadFromRenderedText(highScore,"font2.ttf",yellow,renderer,font,HIGH_score_X,HIGH_score_Y,HIGH_score,HIGH_score);
 
                         loadFont.loadFromRenderedText("Play Again","font1.ttf",yellow,renderer,font,PLAY_AGAIN_X,PLAY_AGAIN_Y,PLAY_AGAIN_W,PLAY_AGAIN_H);
                         loadFont.loadFromRenderedText("Exit","font1.ttf",yellow,renderer,font,EXIT_X,EXIT_Y,EXIT_W,EXIT_H);
@@ -228,20 +293,25 @@ int main( int argc, char* args[] )
 
                         if(event.type==SDL_MOUSEBUTTONDOWN)
                         {
-                            if(SDL_PointInRect(&mouse,&PlayAgainRect)) {
+                            if(SDL_PointInRect(&mouse,&PlayAgainRect))
+                            {
                                 quit=false;
-                                banana.reset();
-                                box.reset();
-                                bird.reset();
+                                banana.reset(0,banana_posy);
 
+                                for(int i=0;i<numOfBird;i++)
+                                {
+                                    bird[i].reset(bird_posy/numOfBird*i+2*val,bird_posy/numOfBird*(i+1)-2*val);
+                                }
+                                break;
                             }
                             else if(SDL_PointInRect(&mouse,&ExitRect))
                             {
                                 gameOver=true;
-
+                                break;
                             }
-                            break;
+                            else continue;
                         }
+                        background.free();
                         loadFont.free();
                     }
                 }
@@ -257,40 +327,26 @@ int main( int argc, char* args[] )
 bool loadMedia()
 {
     bool success=true;
-    if(!background.loadFromFile("game_image/background.png",renderer))
-    {
-        cout<<"Failed to load background texture image!";
-        success=false;
-    }
-    if(!jungle_background.loadFromFile("game_image/jungle_background.png",renderer))
-    {
-        cout<<"Failed to load jungle_background texture image!";
-        success=false;
-    }
+
     if(!monkey_die.loadFromFile("game_image/monkeyDie.png",renderer))
     {
         cout<<"Failed to load monkeyDie texture image!";
         success=false;
     }
-    if(!wire.loadFromFile("game_image/wire.png",renderer))
-    {
-        cout<<"Failed to load wire texture image!";
-        success=false;
-    }
+
     if(!banana.loadFromFile("game_image/banana.png",renderer))
     {
         cout<<"Failed to load banana texture image!";
         success=false;
     }
-    if(!bird.loadFromFile("game_image/bird_texture.png",renderer))
+
+    for(int i=0;i<numOfBird;i++)
     {
-        cout<<"Failed to load bird texture image!";
-        success=false;
-    }
-    if(!box.loadFromFile("game_image/block_wood.png",renderer))
-    {
-        cout<<"Failed to load box texture image!";
-        success=false;
+        if(!bird[i].loadFromFile("game_image/bird_texture.png",renderer))
+        {
+            cout<<"Failed to load bird texture image!";
+            success=false;
+        }
     }
 
     return success;
@@ -298,14 +354,12 @@ bool loadMedia()
 
 void freeTexture()
 {
-    background.free();
-    jungle_background.free();
-    loadFont.free();
-    wire.free();
     banana.free();
-    bird.free();
-    box.free();
-
+    for(int i=0;i<numOfBird;i++)
+    {
+        bird[i].free();
+    }
+    monkey_die.free();
 }
 
 bool CollisionHandle(SDL_Rect A, SDL_Rect B)

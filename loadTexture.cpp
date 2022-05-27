@@ -23,7 +23,7 @@ bool LTexture::loadFromFile(string path,SDL_Renderer* &rendererr)
     }
     else
     {
-        //SDL_SetColorKey(loadedSurface,SDL_TRUE,SDL_MapRGB(loadedSurface->format,0,0xFF,0xFF));
+        SDL_SetColorKey(loadedSurface,SDL_TRUE,SDL_MapRGB(loadedSurface->format,0,0xFF,0xFF));
         newTexture=SDL_CreateTextureFromSurface(rendererr,loadedSurface);
         if(newTexture==NULL)
         {
@@ -37,6 +37,7 @@ bool LTexture::loadFromFile(string path,SDL_Renderer* &rendererr)
         SDL_FreeSurface(loadedSurface);
     }
     texture=newTexture;
+
     return texture!=NULL;
 }
 
@@ -73,11 +74,6 @@ void LTexture::loadFromRenderedText(string textureText,string Font, SDL_Color te
 void LTexture::render(SDL_Renderer* &rendererr,int x, int y,int Width, int Height)
 {
     SDL_Rect renderQuad={x,y,Width,Height};
-//    if( clip != NULL )
-//	{
-//		renderQuad.w = clip->w;
-//		renderQuad.h = clip->h;
-//	}
 
 	//Render to screen
 	SDL_RenderCopy( rendererr, texture, NULL, &renderQuad);
